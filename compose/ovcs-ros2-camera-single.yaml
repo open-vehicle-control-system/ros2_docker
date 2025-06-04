@@ -1,9 +1,6 @@
-version: "3.8"
-
 services:
   test-container:
-    image: loicvigneron/ubuntu-24-04-rpi:latest
+    image: spin42/ovcs-ros2-ubnutu-24-04:latest
     privileged: true
     volumes:
       - /run/udev:/run/udev:ro
-
