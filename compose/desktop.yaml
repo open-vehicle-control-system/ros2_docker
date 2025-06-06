@@ -1,0 +1,7 @@
+services:
+  zenoh:
+    image: spin42/ovcs-ros2-ubnutu-24-04:latest
+    network_mode: host
+    environment:
+      ZENOH_CONFIG_OVERRIDE: 'connect/endpoints=["tcp/172.16.0.68:7447"]'
+    command: bash -c "ros2 run rmw_zenoh_cpp rmw_zenohd"

@@ -1,0 +1,22 @@
+services:
+  zenoh:
+    image: spin42/ovcs-ros2-base:ubuntu-24-04
+    network_mode: host
+    environment:
+      ZENOH_CONFIG_OVERRIDE: 'connect/endpoints=["tcp/172.16.0.68:7447"]'
+    command: bash -c "ros2 run rmw_zenoh_cpp rmw_zenohd"
+
+  stereo_camera:
+    image: spin42/ovcs-ros2-raspberry:ubuntu-24-04
+    command: ros2 run ovcs pi_camera_stereo_publisher --ros-args -p right_id:=0 -p left_id:=1 -p width:=640 -p height:=480 -p frame_rate:=30
+    network_mode: host
+    privileged: true
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /data:/data
+
+  disparity:
+    image: spin42/ovcs-ros2-raspberry:ubuntu-24-04
+    command: /bin/bash -c "until ros2 topic list | grep -q /stereo/right/image_raw; do sleep 1; done && ros2 launch ovcs ovcs_cpu_disparity_pipeline_no_sync.launch.py"
+    # command: ros2 launch ovcs ovcs_cpu_disparity_pipeline_no_sync.launch.py
+    network_mode: host
