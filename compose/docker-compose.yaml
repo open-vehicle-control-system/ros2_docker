@@ -1,6 +1,6 @@
 services:
   zenoh:
-    image: spin42/ovcs-ros2-base:ubuntu-24-04
+    image: test
     network_mode: host
     environment:
       ZENOH_CONFIG_OVERRIDE: 'connect/endpoints=["tcp/172.16.0.68:7447"]'
