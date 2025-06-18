@@ -1,12 +1,12 @@
 FROM ubuntu:24.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONPATH=/usr/local/lib/aarch64-linux-gnu/python3.12/site-packages
-ENV LANG=C.UTF-8
-ENV LC_ALL=C.UTF-8
-ENV ROS_APT_VERSION=1.1.0
-ENV UBUNTU_CODENAME=noble
-ENV RMW_IMPLEMENTATION=rmw_zenoh_cpp
+SHELL ["/bin/bash", "-c"]
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    ROS_DISTRO=jazzy \
+    RMW_IMPLEMENTATION=rmw_zenoh_cpp
 
 WORKDIR /opt
 
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y curl gnupg2 lsb-release locales softwar
 RUN add-apt-repository universe
 
 RUN curl -L -o /tmp/ros2-apt-source.deb \
-    "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_VERSION}/ros2-apt-source_${ROS_APT_VERSION}.${UBUNTU_CODENAME}_all.deb" && \
+    "https://github.com/ros-infrastructure/ros-apt-source/releases/download/1.1.0/ros2-apt-source_1.1.0.noble_all.deb" && \
     apt-get update && \
     apt-get install -y /tmp/ros2-apt-source.deb
 
@@ -31,8 +31,5 @@ RUN apt update && apt install -y \
     ros-jazzy-compressed-depth-image-transport ros-jazzy-compressed-image-transport ros-jazzy-zstd-image-transport \
     ros-jazzy-turbojpeg-compressed-image-transport ros-jazzy-foxglove-bridge ros-jazzy-foxglove-compressed-video-transport ros-jazzy-ffmpeg-image-transport ros-jazzy-desktop
 
-SHELL ["/bin/bash", "-c"]
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-ENV ROS_DISTRO=jazzy
-ENV ROS_DOMAIN_ID=0
 CMD ["/bin/bash"]

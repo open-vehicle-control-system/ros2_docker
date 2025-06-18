@@ -27,12 +27,18 @@ Cross-compile the image for the Raspberry Pi (ARM64) and push it to your contain
 ```bash
 docker buildx build \
   --platform linux/arm64 \
-  -t test \
+  -t ghcr.io/open-vehicle-control-system/ovcs-ros2-bookworm-jazzy-rpi:latest \
   -f dockerfile/debian-bookworm-jazzy/raspberry/Dockerfile \
   --push \
   dockerfile/debian-bookworm-jazzy/raspberry
 ```
 
+```bash
+docker build \
+  -t ghcr.io/open-vehicle-control-system/ovcs-ros2-noble-jazzy-desktpo:latest \
+  -f dockerfile/ubuntu-24-04-jazzy/desktop/Dockerfile \
+  dockerfile/ubuntu-24-04-jazzy/desktop
+```
 ---
 
 ### 🍓 On Raspberry Pi
@@ -41,7 +47,7 @@ docker buildx build \
 
 ```bash
 docker build \
-  -t test \
+  -t ghcr.io/open-vehicle-control-system/ovcs-ros2-bookworm-jazzy-rpi:latest \
   -f dockerfile/debian-bookworm-jazzy/raspberry/Dockerfile \
   dockerfile/debian-bookworm-jazzy/raspberry
 ```
