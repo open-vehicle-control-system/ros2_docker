@@ -3,13 +3,17 @@ set -e
 
 WS_DIR=/opt/ros2_ws
 SRC_DIR="$WS_DIR/src"
-REPO_NAME=ovcs_ros2
 CHECKSUM_FILE="$WS_DIR/.package_xml_checksum"
 
-cd "$WS_DIR"
-colcon build --symlink-install
+source /root/.cargo/env
+source /opt/ros2/install/setup.bash
+source /opt/ros2_packages/install/setup.bash
 
-source /opt/ros/jazzy/setup.bash
-source "$WS_DIR/install/setup.bash"
+if [ "$BUILD_OVCS_ROS2_WS" = "yes" ]; then
+  cd "$WS_DIR"
+  colcon build --symlink-install
+fi
+
+source /opt/ros2_ws/install/setup.bash
 
 exec "$@"

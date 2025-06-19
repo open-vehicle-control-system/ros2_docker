@@ -20,6 +20,14 @@ This repository helps you run **ROS 2 Jazzy** inside Docker with full support fo
 
 ## 📦 Docker Image Build
 
+### ✅ Initialize multi arch builder on `amd64` (your desktop/laptop)
+
+```bash
+docker buildx create --name multiarch-builder --node amd64-node --platform liunx/amd64 --driver docker-container
+docker buildx create --name multiarch-builder --node arm64-node --platform linux/arm64 --driver docker-container ssh://PI_USER@PI_IP_ADDRESS --append
+docker buildx inspect --bootstrap
+```
+
 ### ✅ On `amd64` (your desktop/laptop)
 
 Cross-compile the image for the Raspberry Pi (ARM64) and push it to your container registry or use `--load`:
@@ -34,8 +42,17 @@ docker buildx build \
 ```
 
 ```bash
+docker buildx build \
+  --platform linux/arm64,linux/amd64 \
+  -t ghcr.io/open-vehicle-control-system/zenoh:1.4.0 \
+  -f dockerfile/zenoh/Dockerfile \
+  --push \
+  dockerfile/zenoh
+```
+
+```bash
 docker build \
-  -t ghcr.io/open-vehicle-control-system/ovcs-ros2-noble-jazzy-desktpo:latest \
+  -t ghcr.io/open-vehicle-control-system/ovcs-ros2-noble-jazzy-desktop:latest \
   -f dockerfile/ubuntu-24-04-jazzy/desktop/Dockerfile \
   dockerfile/ubuntu-24-04-jazzy/desktop
 ```
@@ -58,7 +75,7 @@ docker build \
 docker run --rm -it \
   --privileged \
   -v /run/udev:/run/udev:ro \
-  test
+  ghcr.io/open-vehicle-control-system/ovcs-ros2-bookworm-jazzy-rpi:latest
 ```
 
 > 🔐 The `--privileged` flag and `/run/udev` volume mount are required for camera hardware access.
@@ -95,3 +112,10 @@ sudo cloud-init clean
 ---
 
 Happy hacking! 🧪🔬
+
+
+ls /dev/input/by-id/
+readlink -f /dev/input/by-id/usb-Microsoft_Controller_3039373130343938333434343332-event-joystick
+
+docker run --rm -ti --net host --device=/dev/input/js0 --device=/dev/input/event18 ghcr.io/open-vehicle-control-system/ovcs-ros2-noble-jazzy-desktop:latest ros2 run joy joy_node
+https://docs.ros.org/en/jazzy/p/joy/

@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=C.UTF-8 \
     ROS_DISTRO=jazzy \
     RMW_IMPLEMENTATION=rmw_zenoh_cpp \
-    ROSDEP_SKIP_KEYS="fastcdr rti-connext-dds-6.0.1 urdfdom_headers python3-vcstool cargo rustc"
+    ROSDEP_SKIP_KEYS="fastcdr rti-connext-dds-6.0.1 python3-vcstool cargo rustc"
 
 WORKDIR /opt
 
@@ -56,7 +56,7 @@ RUN cd /opt/ros2 && \
     rm -rf /var/lib/apt/lists/*
 
 RUN cd /opt/ros2 && \
-    RMW_IMPLEMENTATION=rmw_fastrtps_cpp colcon build --symlink-install && \
+    RMW_IMPLEMENTATION=rmw_fastrtps_cpp colcon build --symlink-install --event-handlers console_direct+ && \
     echo "source /opt/ros2/install/setup.bash" >> /root/.bashrc
 
 RUN curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
@@ -66,7 +66,9 @@ RUN mkdir -p /opt/ros2_packages/src && \
     cd /opt/ros2_packages/src && \
     git clone https://github.com/ros2/rmw_zenoh.git -b jazzy && \
     git clone https://github.com/ros-perception/vision_opencv.git && \
-    git clone https://github.com/ros-perception/image_pipeline.git -b jazzy
+    git clone https://github.com/ros-perception/image_pipeline.git -b jazzy && \
+    git clone https://github.com/facontidavide/rosx_introspection.git && \
+    git clone https://github.com/foxglove/ros-foxglove-bridge.git
 
 RUN cd /opt/ros2_packages && \
     source /opt/ros2/install/setup.bash && \
@@ -93,6 +95,9 @@ RUN mkdir -p /opt/ros2_ws/src && \
     rosdep install --from-paths src --ignore-src -r -y --rosdistro jazzy --skip-keys=libcamera && \
     colcon build --symlink-install && \
     echo "source /opt/ros2_ws/install/setup.bash" >> /root/.bashrc
+
+
+ADD fixed_foxglove_bridge_launch.xml /opt/ros2_packages/install/foxglove_bridge/share/foxglove_bridge/launch/foxglove_bridge_launch.xml
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

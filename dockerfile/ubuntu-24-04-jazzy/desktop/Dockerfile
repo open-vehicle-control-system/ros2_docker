@@ -31,5 +31,11 @@ RUN apt update && apt install -y \
     ros-jazzy-compressed-depth-image-transport ros-jazzy-compressed-image-transport ros-jazzy-zstd-image-transport \
     ros-jazzy-turbojpeg-compressed-image-transport ros-jazzy-foxglove-bridge ros-jazzy-foxglove-compressed-video-transport ros-jazzy-ffmpeg-image-transport ros-jazzy-desktop
 
+RUN apt update && apt install -y ros-jazzy-joy iproute2 usbutils
+
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
-CMD ["/bin/bash"]
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

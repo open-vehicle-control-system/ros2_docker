@@ -1,0 +1,26 @@
+services:
+  zenoh:
+    image: ghcr.io/open-vehicle-control-system/zenoh:1.4.0
+    network_mode: host
+    command: -c router_config.json
+    pull_policy: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "7447"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  stereo_camera:
+    image: ghcr.io/open-vehicle-control-system/ovcs-ros2-bookworm-jazzy-rpi:latest
+    command: ros2 run ovcs pi_camera_stereo_publisher --ros-args -p right_id:=0 -p left_id:=1 -p width:=640 -p height:=480 -p frame_rate:=30
+    network_mode: host
+    privileged: true
+    pull_policy: always
+    volumes:
+      - /run/udev:/run/udev:ro
+      - /data:/data
+      - /home/pi/ovcs_ros2:/opt/ros2_ws/src/ovcs_ros2
+    depends_on:
+      zenoh:
+        condition: service_healthy

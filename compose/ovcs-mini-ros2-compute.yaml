@@ -1,0 +1,20 @@
+services:
+  zenoh:
+    image: ghcr.io/open-vehicle-control-system/zenoh:1.4.0
+    network_mode: host
+    command: -c router_config.json
+    pull_policy: always
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "7447"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  foxglove-bridge:
+    image: ghcr.io/open-vehicle-control-system/ovcs-ros2-bookworm-jazzy-rpi:latest
+    command: ros2 launch foxglove_bridge foxglove_bridge_launch.xml port:=8765 best_effort_qos_topic_whitelist:=['.*'] max_qos_depth:=5
+    network_mode: host
+    depends_on:
+      zenoh:
+        condition: service_healthy
