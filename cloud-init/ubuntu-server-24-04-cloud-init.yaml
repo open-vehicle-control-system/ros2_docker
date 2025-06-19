@@ -47,12 +47,15 @@ write_files:
 
       [Service]
       WorkingDirectory=/home/pi/ros2_docker
+      Environment=HOME=/home/pi
       ExecStartPre=/bin/mkdir -p /home/pi/ros2_docker
+      ExecStartPre=/usr/bin/git config --global --add safe.directory /home/pi/ros2_docker
       ExecStartPre=/usr/bin/git -C /home/pi/ros2_docker pull
-      ExecStart=/usr/bin/docker compose up -d -f compose/$(hostname).yaml
-      ExecStop=/usr/bin/docker compose down
+      ExecStart=/bin/sh -c "/usr/bin/docker compose -f compose/$(hostname).yaml up --remove-orphans -d"
+      ExecStop=/bin/sh -c "/usr/bin/docker compose -f compose/$(hostname).yaml stop"
       TimeoutStartSec=0
       RemainAfterExit=yes
+      User=pi
 
       [Install]
       WantedBy=multi-user.target
