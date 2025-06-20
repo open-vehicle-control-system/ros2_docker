@@ -1,6 +1,6 @@
 services:
   zenoh:
-    image: ghcr.io/open-vehicle-control-system/zenoh:1.4.0@sha256:fdf51f95790d5273116f31b40ca7b50e698133c11a09dcc1da8a548f5f594c07
+    image: ghcr.io/open-vehicle-control-system/zenoh@sha256:68bfa418de3ed988c40ba8bd1ac2ea4a1ad514dfc928e399ec6d0819383772ee
     network_mode: host
     command: -c router_config.json
     pull_policy: always
